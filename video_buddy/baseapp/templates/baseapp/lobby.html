@@ -1,0 +1,89 @@
+{% extends 'baseapp/main.html' %}
+
+{% block title %} Lobby {% endblock title %}
+
+
+{% block content %}
+<style>
+.container {
+    text-align: center;
+    margin-top: 30px;
+    height: 400px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-input {
+    margin-bottom: 10px;
+    padding: 10px;
+    width: 100%;
+}
+
+.form-input label {
+    display: block;
+}
+
+.form-input input[type="text"] {
+    padding: 5px;
+    margin-top: 5px;
+}
+
+.form-submit {
+    margin-top: 20px;
+}
+
+.btn-join {
+    padding: 10px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+</style>
+<main>
+    <div class="container">
+        <h1>Enter Credentials</h1>
+        <form id="form" action="/index" method="POST">{% csrf_token %}
+            <div class="form-input">
+                <label for="roomname">Roomname:</label>
+                <input class="roomname" type="text" id="roomname" name="roomname">
+                <label for="username">Username:</label>
+                <input class="username" type="text" id="username" name="username">
+            </div>
+            <div class="form-submit">
+                <button class="btn-join" type="submit" value="Join Stream">Join Video</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script type="text/javascript">
+    let form = document.getElementById('form')
+    let handleSubmit = async(e) => {
+        e.preventDefault()
+        let room = e.target.roomname.value.toUpperCase()
+        let userName = e.target.username.value
+        let response = await fetch(`/token/?channelName=${room}`)
+        let data = await response.json()
+
+        let UID = data.uid
+        let token = data.token
+        sessionStorage.setItem('UID', UID)
+        sessionStorage.setItem('token', token)
+        sessionStorage.setItem('room', room)
+        sessionStorage.setItem('userName', userName)
+        window.open('/room/', '_self')
+    }
+    form.addEventListener('submit', handleSubmit)
+
+</script>
+{% endblock content %}
+
