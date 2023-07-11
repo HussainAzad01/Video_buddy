@@ -15,11 +15,19 @@ let joinAndDisplayLocalStream = async () =>{
     client.on('user-published', handleUserJoined)
     client.on('user-left', handleUserLeft)
 
-    UID = await client.join(APP_ID,CHANNEL,TOKEN, null)
+    try{
+        await client.join(APP_ID, CHANNEL, TOKEN, UID)
+    }catch(error){
+        console.error(error)
+        window.open('/','_self')
+    }
 
     localTracks = await AgoraRTC.createMicrophoneAndCameraTracks()
+
+    let member = await createUser()    
+
     let player =`<div class="video-container" id="user-container-${UID}">
-                        <div class="username-wrapper"><span class="user-name">Hussain Azad</span></div>
+                        <div class="username-wrapper"><span class="user-name">${member.name}</span></div>
                         <div class="video-player" id="user-${UID}"></div>
                 </div>`
 
@@ -38,13 +46,17 @@ let handleUserJoined = async(user, mediaType)=>{
         if(player != null){
             player.remove()
         }
+
+        let member = await getUser(user)
+
         player = `<div class="video-container" id="user-container-${user.uid}">
-                    <div class="username-wrapper"><span class="user-name">Hussain Azad</span></div>
+                    <div class="username-wrapper"><span class="user-name">${member.user_name}</span></div>
                     <div class="video-player" id="user-${user.uid}"></div>
             </div>`
 
         document.getElementById('video-streams').insertAdjacentHTML('beforeend', player)
         user.videoTrack.play(`user-${user.uid}`) 
+        await client.publish(remoteUsers[0],remoteUsers[1])
     }
     if(mediaType === 'audio'){
         user.audioTrack.play()
@@ -87,6 +99,34 @@ let toggleCamera = async(e) =>{
         e.target.style.backgroundColor = '#4d4d4d'
     }
 }
+
+let createUser = async() =>{
+    let response = await fetch('/create_user/',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+
+        body:JSON.stringify({'name': userName, 'uid':UID, 'room_name':CHANNEL})
+    })
+    let member = await response.json()
+    return member
+}
+
+let getUser = async(user) =>{
+    let response = await fetch(`/getUser/?uid=${user.uid}&room_name=${CHANNEL}`)
+    let member = await response.json()
+    return member
+}
+
+let deleteUser = async() =>{
+    let response = await fetch('/delete_user/',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+
+        body:JSON.stringify({'name': userName, 'uid':UID, 'room_name':CHANNEL})
+    })
+}
+
+
 joinAndDisplayLocalStream()
 
 var leave_btn = document.getElementById('leave-btn').addEventListener('click', leaveStream)

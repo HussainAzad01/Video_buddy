@@ -51,7 +51,7 @@
 <main>
     <div class="container">
         <h1>Enter Credentials</h1>
-        <form id="form" action="/index" method="POST">{% csrf_token %}
+        <form id="form">
             <div class="form-input">
                 <label for="roomname">Roomname:</label>
                 <input class="roomname" type="text" id="roomname" name="roomname">
@@ -72,7 +72,7 @@
         let room = e.target.roomname.value.toUpperCase()
         let userName = e.target.username.value
         let response = await fetch(`/token/?channelName=${room}`)
-        let data = await response.json()
+        let data = await response.json() 
 
         let UID = data.uid
         let token = data.token
