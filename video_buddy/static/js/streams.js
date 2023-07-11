@@ -56,7 +56,6 @@ let handleUserJoined = async(user, mediaType)=>{
 
         document.getElementById('video-streams').insertAdjacentHTML('beforeend', player)
         user.videoTrack.play(`user-${user.uid}`) 
-        await client.publish(remoteUsers[0],remoteUsers[1])
     }
     if(mediaType === 'audio'){
         user.audioTrack.play()
@@ -65,6 +64,7 @@ let handleUserJoined = async(user, mediaType)=>{
 
 let handleUserLeft = async(user) =>{
     delete remoteUsers[user.uid]
+    await deleteUser()
     document.getElementById(`user-container-${user.uid}`).remove()
 } 
 
@@ -74,7 +74,9 @@ let leaveStream = async(e) =>{
         localTracks[i].close()
         e.target.style.backgroundColor = 'red'
     }
+
     await client.leave()
+    await deleteUser()
     window.open('/', '_self')
 }
 

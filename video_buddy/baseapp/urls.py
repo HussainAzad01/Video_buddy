@@ -7,5 +7,5 @@ urlpatterns = [
     path('token/', views.generateToken, name='token'),
     path('create_user/', views.createUser, name='create_user'),
     path('get_user/', views.getUser, name='get_user'),
-    path('delete_User/', views.deleteUser, name='delete_User')
+    path('delete_user/', views.deleteUser, name='delete_User')
 ]

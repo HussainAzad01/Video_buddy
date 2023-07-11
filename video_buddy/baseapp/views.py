@@ -57,4 +57,4 @@ def deleteUser(request):
         room_name=data['room_name']
     )
     member.delete()
-    return
+    return JsonResponse({"message": "member delete successfully"})
