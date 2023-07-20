@@ -41,12 +41,12 @@ def getUser(request):
     uid = request.GET.get('uid')
     room_name = request.GET.get('room_name')
 
-    user = RoomMembers.object.get(
-        uid=uid,
+    user = RoomMembers.objects.get(
+        user_uid=uid,
         room_name=room_name,
     )
-    name = user.name
-    return JsonResponse({"user_name": name},safe=False)
+    name = user.username
+    return JsonResponse({"user_name": name}, safe=False)
 
 @csrf_exempt
 def deleteUser(request):

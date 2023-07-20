@@ -114,7 +114,7 @@ let createUser = async() =>{
 }
 
 let getUser = async(user) =>{
-    let response = await fetch(`/getUser/?uid=${user.uid}&room_name=${CHANNEL}`)
+    let response = await fetch(`/get_user/?uid=${user.uid}&room_name=${CHANNEL}`)
     let member = await response.json()
     return member
 }
